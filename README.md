@@ -11,7 +11,7 @@ This repository now includes a minimal CMake-based C++ skeleton:
 - a `qrcode` executable target
 
 The current program parses input from either the command line or standard input.
-Actual QR code generation is still not implemented yet.
+It generates a real QR code PNG using `qrencode` and writes the final image with OpenCV.
 
 ## Goal
 
@@ -37,6 +37,10 @@ cd build
 cmake ..
 cmake --build .
 ```
+
+Runtime dependency:
+
+- `qrencode` must be available in `PATH`
 
 ## Usage
 
@@ -65,13 +69,14 @@ The program currently:
 - reads a text value
 - validates that an input was provided
 - prints the received value
-- reports that QR code generation is not implemented yet
+- generates a real QR code image from the input text
+- writes the output image to the current directory
 
 Example output:
 
 ```txt
 Input received: bag_1
-QR code generation is not implemented yet.
+Image written to: qrcode_bag_1.png
 ```
 
 ## Project Layout
@@ -86,7 +91,6 @@ QR code generation is not implemented yet.
 
 ## Next Steps
 
-- implement the QR code generation logic
-- define the output format
+- add configurable output options
 - add tests
 - document runtime options once the feature set is stable
