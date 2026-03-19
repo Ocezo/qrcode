@@ -38,9 +38,27 @@ cmake ..
 cmake --build .
 ```
 
-Runtime dependency:
+## Requirements
+
+This project requires `qrencode` to be available in `PATH` at runtime.
+
+Linux (Debian/Ubuntu):
+
+```bash
+sudo apt update
+sudo apt install qrencode
+```
+
+Windows (Chocolatey):
+
+```powershell
+choco install qrencode
+```
+
+Project link:
 
 - `qrencode` must be available in `PATH`
+- `libqrencode`: https://github.com/fukuchi/libqrencode
 
 ## Usage
 
