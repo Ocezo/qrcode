@@ -1,6 +1,7 @@
 # QR Code Generator
 
 Small C++ project intended to generate a QR code from a string input such as `bag_1`.
+For the moment this project is just a wrapper of the famous [qrencode](https://github.com/fukuchi/libqrencode) library written by [Kentaro Fukuchi](https://fukuchi.org).
 
 ## Status
 
@@ -57,7 +58,6 @@ choco install qrencode
 
 Project link:
 
-- `qrencode` must be available in `PATH`
 - `libqrencode`: https://github.com/fukuchi/libqrencode
 
 ## Usage
