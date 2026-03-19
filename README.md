@@ -1,6 +1,6 @@
 # QR Code Generator
 
-Small C++ project intended to generate a QR code from a string input such as `bag_1`.
+Small C++ project intended to generate a QR code from a string input such as `bag1`.
 For the moment this project is just a wrapper of the famous [qrencode](https://github.com/fukuchi/libqrencode) library written by [Kentaro Fukuchi](https://fukuchi.org).
 
 ## Status
@@ -25,7 +25,7 @@ The intended goal of the project is to:
 Example input:
 
 ```txt
-bag_1
+bag1
 ```
 
 ## Build
@@ -65,13 +65,13 @@ Project link:
 Run with a command-line argument:
 
 ```bash
-./qrcode bag_1
+./qrcode bag1
 ```
 
 Or pass the input through standard input:
 
 ```bash
-echo "bag_1" | ./qrcode
+echo "bag1" | ./qrcode
 ```
 
 Show the help message:
@@ -86,15 +86,16 @@ The program currently:
 
 - reads a text value
 - validates that an input was provided
-- prints the received value
-- generates a real QR code image from the input text
+- converts the input into a URL of the form `https://ocezo.fr/earthbag.html/#<input>`
+- generates a real QR code image from that URL
 - writes the output image to the current directory
 
 Example output:
 
 ```txt
-Input received: bag_1
-Image written to: qrcode_bag_1.png
+Input received: bag1
+Encoded URL: https://ocezo.fr/earthbag.html/#bag1
+Image written to: qrcode_bag1.png
 ```
 
 ## Project Layout

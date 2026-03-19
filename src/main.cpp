@@ -29,6 +29,10 @@ void print_usage(const char* program_name) {
               << "   or: echo \"text\" | " << program_name << "\n";
 }
 
+std::string build_target_url(const std::string& anchor) {
+    return "https://ocezo.fr/earthbag.html/#" + anchor;
+}
+
 std::string sanitize_filename(const std::string& value) {
     std::string result;
     result.reserve(value.size());
@@ -134,10 +138,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    const std::string target_url = build_target_url(input);
+
     std::cout << "Input received: " << input << '\n';
+    std::cout << "Encoded URL: " << target_url << '\n';
 
     const std::string output_file = "qrcode_" + sanitize_filename(input) + ".png";
-    if (!generate_qr_image(input, output_file)) {
+    if (!generate_qr_image(target_url, output_file)) {
         return 1;
     }
 
