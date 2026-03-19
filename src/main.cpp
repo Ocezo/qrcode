@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
 
 namespace {
 
@@ -37,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     if (argc > 1) {
         input = argv[1];
-    } else if (!std::cin.fail() && !std::cin.eof()) {
+    } else if (!isatty(STDIN_FILENO) && !std::cin.fail() && !std::cin.eof()) {
         input = read_from_stdin();
     }
 
