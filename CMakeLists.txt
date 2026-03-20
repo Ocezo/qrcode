@@ -10,7 +10,12 @@ find_package(OpenCV REQUIRED COMPONENTS core imgcodecs imgproc)
 
 add_executable(qrcode
     src/main.cpp
+    src/config_loader.cpp
+    src/url_builder.cpp
+    src/qr_generator.cpp
 )
+
+target_include_directories(qrcode PRIVATE include)
 
 target_link_libraries(qrcode PRIVATE ${OpenCV_LIBS})
 
