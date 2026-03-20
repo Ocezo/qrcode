@@ -1,18 +1,18 @@
 # QR Code Generator
 
 Small C++ project that generates a QR code PNG from a simple input such as `1`.
-For now, this project is a small wrapper around the well-known [qrencode](https://github.com/fukuchi/libqrencode) library written by [Kentaro Fukuchi](https://fukuchi.org).
+At the moment, it acts as a lightweight wrapper around [qrencode](https://github.com/fukuchi/libqrencode).
 
 ## Status
 
-This repository now includes:
+The project currently includes:
 
 - a CMake build
-- a small modular C++ codebase
-- a `qrcode` executable target
-- a YAML configuration file used to build the final target URL
+- a modular C++ codebase
+- a `qrcode` executable
+- a YAML configuration file used to build the final URL
 
-The program reads an input value, converts it into a URL using `config/params.yaml`, generates a QR code with `qrencode`, and writes the final PNG image into `img/`.
+The program reads an input value, builds a target URL from `config/params.yaml`, generates a QR code with `qrencode`, and writes the final PNG into `img/`.
 
 ## Goal
 
@@ -37,8 +37,6 @@ https://ocezo.fr/earthbag.html/#bag1
 
 ## Build
 
-Standard CMake build flow:
-
 ```bash
 mkdir -p build
 cd build
@@ -48,7 +46,7 @@ cmake --build .
 
 ## Requirements
 
-This project requires `qrencode` to be available in `PATH` at runtime.
+`qrencode` must be available in `PATH` at runtime.
 
 Linux (Debian/Ubuntu):
 
@@ -69,19 +67,19 @@ Project link:
 
 ## Usage
 
-Run with a command-line argument:
+Command-line input:
 
 ```bash
 ./qrcode 1
 ```
 
-Or pass the input through standard input:
+Standard input:
 
 ```bash
 echo "1" | ./qrcode
 ```
 
-Show the help message:
+Help:
 
 ```bash
 ./qrcode --help
@@ -89,7 +87,7 @@ Show the help message:
 
 ## Configuration
 
-The target URL is built from [config/params.yaml](https://github.com/Ocezo/qrcode/blob/main/config/params.yaml):
+The target URL is built from [params.yaml](https://github.com/Ocezo/qrcode/blob/main/config/params.yaml):
 
 ```yaml
 url_params:
@@ -98,13 +96,13 @@ url_params:
   key:     "bag"
 ```
 
-The final URL format is:
+Final URL format:
 
 ```txt
 <website>/<page>/#<key><input>
 ```
 
-With the current configuration and the input `1`, the program encodes:
+With the current configuration and the input `1`, the encoded URL is:
 
 ```txt
 https://ocezo.fr/earthbag.html/#bag1
@@ -126,7 +124,7 @@ Example output:
 ```txt
 Input received: 1
 Encoded URL: https://ocezo.fr/earthbag.html/#bag1
-Image written to: /home/you/Workspace/qrcode/img/qrcode_bag1.png
+Image written to: /home/your/Workspace/qrcode/img/qrcode_bag1.png
 ```
 
 ## Project Layout
@@ -153,6 +151,6 @@ Image written to: /home/you/Workspace/qrcode/img/qrcode_bag1.png
 
 ## Next Steps
 
-- add configurable output options
 - add tests
+- add configurable output options
 - document runtime options once the feature set is stable
