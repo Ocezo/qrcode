@@ -4,16 +4,43 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <cstdio>
+#include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <unistd.h>
 
 namespace {
 
+struct UrlParams {
+    std::string website;
+    std::string page;
+    std::string key;
+};
+
 std::string trim_trailing_newlines(std::string value) {
-    while (!value.empty() && (value.back() == '\n' || value.back() == '\r')) {
+    while (value.empty() == false && (value.back() == '\n' || value.back() == '\r')) {
         value.pop_back();
+    }
+    return value;
+}
+
+std::string trim(std::string value) {
+    const std::string whitespace = " \t\r\n";
+    const std::size_t first = value.find_first_not_of(whitespace);
+    if (first == std::string::npos) {
+        return {};
+    }
+
+    const std::size_t last = value.find_last_not_of(whitespace);
+    return value.substr(first, last - first + 1);
+}
+
+std::string unquote(std::string value) {
+    value = trim(value);
+    if (value.size() >= 2 && value.front() == '"' && value.back() == '"') {
+        return value.substr(1, value.size() - 2);
     }
     return value;
 }
@@ -29,8 +56,62 @@ void print_usage(const char* program_name) {
               << "   or: echo \"text\" | " << program_name << "\n";
 }
 
-std::string build_target_url(const std::string& anchor) {
-    return "https://ocezo.fr/earthbag.html/#" + anchor;
+UrlParams load_url_params(const std::string& config_path) {
+    std::ifstream file(config_path);
+    if (file.is_open() == false) {
+        throw std::runtime_error("Failed to open config file: " + config_path);
+    }
+
+    UrlParams params;
+    bool inside_url_params = false;
+    std::string line;
+
+    while (std::getline(file, line)) {
+        const std::string trimmed = trim(line);
+        if (trimmed.empty() || trimmed[0] == '#') {
+            continue;
+        }
+
+        if (trimmed == "url_params:") {
+            inside_url_params = true;
+            continue;
+        }
+
+        if (inside_url_params == false) {
+            continue;
+        }
+
+        if (line.rfind("  ", 0) == std::string::npos) {
+            break;
+        }
+
+        const std::size_t separator = trimmed.find(':');
+        if (separator == std::string::npos) {
+            continue;
+        }
+
+        const std::string name = trim(trimmed.substr(0, separator));
+        const std::string value = unquote(trimmed.substr(separator + 1));
+
+        if (name == "website") {
+            params.website = value;
+        } else if (name == "page") {
+            params.page = value;
+        } else if (name == "key") {
+            params.key = value;
+        }
+    }
+
+    if (params.website.empty() || params.page.empty() || params.key.empty()) {
+        throw std::runtime_error(
+            "Config file must define non-empty 'website', 'page' and 'key' fields.");
+    }
+
+    return params;
+}
+
+std::string build_target_url(const std::string& anchor, const UrlParams& params) {
+    return params.website + "/" + params.page + "/#" + params.key + anchor;
 }
 
 std::string sanitize_filename(const std::string& value) {
@@ -47,8 +128,8 @@ std::string sanitize_filename(const std::string& value) {
 }
 
 std::string make_temp_path() {
-    std::string path = "/tmp/qrcode_XXXXXX";
-    int fd = mkstemp(path.data());
+    std::string path = "/tmp/qrcode_XXXXXX.png";
+    int fd = mkstemps(path.data(), 4);
     if (fd == -1) {
         return {};
     }
@@ -91,7 +172,7 @@ bool generate_qr_image(const std::string& input, const std::string& output_path)
         return false;
     }
 
-    if (!run_qrencode(input, temp_path)) {
+    if (run_qrencode(input, temp_path) == false) {
         std::remove(temp_path.c_str());
         std::cerr << "Error: failed to generate a QR code with qrencode.\n";
         return false;
@@ -105,7 +186,7 @@ bool generate_qr_image(const std::string& input, const std::string& output_path)
         return false;
     }
 
-    if (!cv::imwrite(output_path, image)) {
+    if (cv::imwrite(output_path, image) == false) {
         std::cerr << "Error: failed to write output image to " << output_path << '\n';
         return false;
     }
@@ -128,7 +209,7 @@ int main(int argc, char* argv[]) {
 
     if (argc > 1) {
         input = argv[1];
-    } else if (!isatty(STDIN_FILENO) && !std::cin.fail() && !std::cin.eof()) {
+    } else if (isatty(STDIN_FILENO) == 0 && std::cin.fail() == false && std::cin.eof() == false) {
         input = read_from_stdin();
     }
 
@@ -138,13 +219,23 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    const std::string target_url = build_target_url(input);
+    const std::string config_path = std::string(PROJECT_SOURCE_DIR) + "/config/params.yaml";
+
+    UrlParams params;
+    try {
+        params = load_url_params(config_path);
+    } catch (const std::exception& error) {
+        std::cerr << "Error: " << error.what() << '\n';
+        return 1;
+    }
+
+    const std::string target_url = build_target_url(input, params);
 
     std::cout << "Input received: " << input << '\n';
     std::cout << "Encoded URL: " << target_url << '\n';
 
-    const std::string output_file = "qrcode_" + sanitize_filename(input) + ".png";
-    if (!generate_qr_image(target_url, output_file)) {
+    const std::string output_file = std::string(PROJECT_SOURCE_DIR) + "/img/qrcode_" + sanitize_filename(input) + ".png";
+    if (generate_qr_image(target_url, output_file) == false) {
         return 1;
     }
 

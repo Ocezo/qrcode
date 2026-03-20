@@ -13,3 +13,5 @@ add_executable(qrcode
 )
 
 target_link_libraries(qrcode PRIVATE ${OpenCV_LIBS})
+
+target_compile_definitions(qrcode PRIVATE PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
