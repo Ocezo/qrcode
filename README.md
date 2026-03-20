@@ -1,31 +1,38 @@
 # QR Code Generator
 
-Small C++ project intended to generate a QR code from a string input such as `bag1`.
-For the moment this project is just a wrapper of the famous [qrencode](https://github.com/fukuchi/libqrencode) library written by [Kentaro Fukuchi](https://fukuchi.org).
+Small C++ project that generates a QR code PNG from a simple input such as `1`.
+For now, this project is a small wrapper around the well-known [qrencode](https://github.com/fukuchi/libqrencode) library written by [Kentaro Fukuchi](https://fukuchi.org).
 
 ## Status
 
-This repository now includes a minimal CMake-based C++ skeleton:
+This repository now includes:
 
-- a `CMakeLists.txt`
-- a `src/main.cpp`
+- a CMake build
+- a small modular C++ codebase
 - a `qrcode` executable target
+- a YAML configuration file used to build the final target URL
 
-The current program parses input from either the command line or standard input.
-It generates a real QR code PNG using `qrencode` and writes the final image with OpenCV.
+The program reads an input value, converts it into a URL using `config/params.yaml`, generates a QR code with `qrencode`, and writes the final PNG image into `img/`.
 
 ## Goal
 
-The intended goal of the project is to:
+The project is intended to:
 
 - accept a text value as input
+- build a target URL from configuration parameters
 - generate the corresponding QR code
-- output the result in a usable form
+- save the result as a PNG image
 
 Example input:
 
 ```txt
-bag1
+1
+```
+
+With the current configuration, this becomes:
+
+```txt
+https://ocezo.fr/earthbag.html/#bag1
 ```
 
 ## Build
@@ -58,20 +65,20 @@ choco install qrencode
 
 Project link:
 
-- `libqrencode`: https://github.com/fukuchi/libqrencode
+- [libqrencode](https://github.com/fukuchi/libqrencode)
 
 ## Usage
 
 Run with a command-line argument:
 
 ```bash
-./qrcode bag1
+./qrcode 1
 ```
 
 Or pass the input through standard input:
 
 ```bash
-echo "bag1" | ./qrcode
+echo "1" | ./qrcode
 ```
 
 Show the help message:
@@ -80,22 +87,46 @@ Show the help message:
 ./qrcode --help
 ```
 
+## Configuration
+
+The target URL is built from [config/params.yaml](https://github.com/Ocezo/qrcode/blob/main/config/params.yaml):
+
+```yaml
+url_params:
+  website: "https://ocezo.fr"
+  page:    "earthbag.html"
+  key:     "bag"
+```
+
+The final URL format is:
+
+```txt
+<website>/<page>/#<key><input>
+```
+
+With the current configuration and the input `1`, the program encodes:
+
+```txt
+https://ocezo.fr/earthbag.html/#bag1
+```
+
 ## Current Behavior
 
 The program currently:
 
-- reads a text value
+- reads a text value from the command line or standard input
 - validates that an input was provided
-- converts the input into a URL of the form `https://ocezo.fr/earthbag.html/#<input>`
+- loads `website`, `page`, and `key` from `config/params.yaml`
+- builds the target URL from those parameters
 - generates a real QR code image from that URL
-- writes the output image to the current directory
+- writes the output image into `img/`
 
 Example output:
 
 ```txt
-Input received: bag1
+Input received: 1
 Encoded URL: https://ocezo.fr/earthbag.html/#bag1
-Image written to: qrcode_bag1.png
+Image written to: /home/you/Workspace/qrcode/img/qrcode_bag1.png
 ```
 
 ## Project Layout
@@ -104,8 +135,20 @@ Image written to: qrcode_bag1.png
 .
 ├── CMakeLists.txt
 ├── README.md
+├── config/
+│   └── params.yaml
+├── img/
+│   └── .dummy
+├── include/
+│   ├── config_loader.hpp
+│   ├── qr_generator.hpp
+│   ├── url_builder.hpp
+│   └── url_params.hpp
 └── src/
-    └── main.cpp
+    ├── config_loader.cpp
+    ├── main.cpp
+    ├── qr_generator.cpp
+    └── url_builder.cpp
 ```
 
 ## Next Steps
