@@ -32,7 +32,7 @@ Example input:
 With the current configuration, this becomes:
 
 ```txt
-https://ocezo.fr/earthbag.html/#bag1
+https://ocezo.fr/earthbag.php?bag=bag1
 ```
 
 ## Build

@@ -1,7 +1,7 @@
 #include "url_builder.hpp"
 
 std::string build_target_url(const std::string& anchor, const UrlParams& params) {
-    return params.website + "/" + params.page + "/#" + params.key + anchor;
+    return params.website + "/" + params.page + "?" + params.key + "=" + params.key + anchor;
 }
 
 std::string sanitize_filename(const std::string& value) {
