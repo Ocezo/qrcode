@@ -19,8 +19,7 @@ The program reads an input value, builds a target URL from `config/params.yaml`,
 The project is intended to:
 
 - accept a text value as input
-- build a target URL from configuration parameters
-- generate the corresponding QR code
+- generate a QR code from a configured target URL
 - save the result as a PNG image
 
 Example input:
@@ -96,16 +95,10 @@ url_params:
   key:     "bag"
 ```
 
-Final URL format:
+URL format:
 
 ```txt
 <website>/<page>?<key>=<key><input>
-```
-
-With the current configuration and the input `1`, the encoded URL is:
-
-```txt
-https://ocezo.fr/earthbag.php?bag=bag1
 ```
 
 ## Current Behavior
@@ -125,28 +118,6 @@ Example output:
 Input received: 1
 Encoded URL: https://ocezo.fr/earthbag.php?bag=bag1
 Image written to: /home/your/Workspace/qrcode/img/qrcode_bag1.png
-```
-
-## Project Layout
-
-```txt
-.
-├── CMakeLists.txt
-├── README.md
-├── config/
-│   └── params.yaml
-├── img/
-│   └── .dummy
-├── include/
-│   ├── config_loader.hpp
-│   ├── qr_generator.hpp
-│   ├── url_builder.hpp
-│   └── url_params.hpp
-└── src/
-    ├── config_loader.cpp
-    ├── main.cpp
-    ├── qr_generator.cpp
-    └── url_builder.cpp
 ```
 
 ## Next Steps
