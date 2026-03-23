@@ -87,25 +87,25 @@ Help:
 
 ## Configuration
 
-The target URL is built from [params.yaml](https://github.com/Ocezo/qrcode/blob/main/config/params.yaml):
+The target URL is built from [config/params.yaml](https://github.com/Ocezo/qrcode/blob/main/config/params.yaml):
 
 ```yaml
 url_params:
   website: "https://ocezo.fr"
-  page:    "earthbag.html"
+  page:    "earthbag.php"
   key:     "bag"
 ```
 
 Final URL format:
 
 ```txt
-<website>/<page>/#<key><input>
+<website>/<page>?<key>=<key><input>
 ```
 
 With the current configuration and the input `1`, the encoded URL is:
 
 ```txt
-https://ocezo.fr/earthbag.html/#bag1
+https://ocezo.fr/earthbag.php?bag=bag1
 ```
 
 ## Current Behavior
@@ -123,7 +123,7 @@ Example output:
 
 ```txt
 Input received: 1
-Encoded URL: https://ocezo.fr/earthbag.html/#bag1
+Encoded URL: https://ocezo.fr/earthbag.php?bag=bag1
 Image written to: /home/your/Workspace/qrcode/img/qrcode_bag1.png
 ```
 
